@@ -1,12 +1,17 @@
 <template>
-  <div>
+  <div class="container">
     <button @click="linkStart">connect</button>
     <button @click="linkEnd">disconnect</button>
+    <p>
+      Your Address:<span>{{ address }}</span>
+    </p>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron'
+const address = ref('')
 const wallet = new WalletConnectWallet({
   network: WalletConnectChainID.Mainnet,
   options: {
@@ -40,11 +45,24 @@ const wallet = new WalletConnectWallet({
 
 const linkStart = async () => {
   await wallet.connect()
+  address.value = wallet.address
   console.log(wallet.address)
 }
 
 const linkEnd = async () => {
   await wallet.disconnect()
+  address.value = ''
   console.log(wallet.address)
 }
 </script>
+
+<style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  height: 100vh;
+}
+</style>
