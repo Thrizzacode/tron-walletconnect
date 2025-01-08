@@ -1,10 +1,21 @@
 <template>
   <div class="container">
-    <button @click="linkStart">connect</button>
-    <button @click="linkEnd">disconnect</button>
-    <p>
-      Your Address:<span>{{ address }}</span>
-    </p>
+    <button class="btn" @click="linkStart">connect</button>
+    <button class="btn" @click="linkEnd">disconnect</button>
+    <div>
+      <p>
+        Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
+      </p>
+      <p>
+        Your Address: <span>{{ address }}</span>
+      </p>
+    </div>
+
+    <h3 style="margin-top: 50px; font-weight: bold">支援錢包</h3>
+    <div class="wallets">
+      <img width="100" class="icon" src="@/assets/icons/tp.png" alt="" />
+      <img width="100" class="icon" src="@/assets/icons/tw.png" alt="" />
+    </div>
   </div>
 </template>
 
@@ -12,6 +23,7 @@
 import { ref } from 'vue'
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron'
 const address = ref('')
+const status = ref(false)
 const wallet = new WalletConnectWallet({
   network: WalletConnectChainID.Mainnet,
   options: {
@@ -46,12 +58,14 @@ const wallet = new WalletConnectWallet({
 const linkStart = async () => {
   await wallet.connect()
   address.value = wallet.address
-  console.log(wallet.address)
+  status.value = true
+  console.log(wallet)
 }
 
 const linkEnd = async () => {
   await wallet.disconnect()
   address.value = ''
+  status.value = false
   console.log(wallet.address)
 }
 </script>
@@ -64,5 +78,25 @@ const linkEnd = async () => {
   justify-content: center;
   gap: 20px;
   height: 100vh;
+}
+
+.btn {
+  padding: 10px 20px;
+  background-color: #60dd7f;
+  color: #000;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wallets {
+  display: flex;
+  gap: 20px;
+}
+
+.icon {
+  border-radius: 50%;
+  padding: 5px;
+  background-color: #fff;
 }
 </style>
