@@ -1,7 +1,9 @@
 <template>
   <div class="container">
-    <button class="btn" @click="linkStart">connect</button>
-    <button class="btn" @click="linkEnd">disconnect</button>
+    <button class="btn" @click="linkStart">Connect</button>
+    <button class="btn" @click="linkEnd">Disconnect</button>
+    <button class="btn" @click="signMessage">Sign Message</button>
+    <!-- <button class="btn" @click="signTransaction">Sign Transaction</button> -->
     <div>
       <p>
         Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
@@ -25,10 +27,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron'
+import { TronWeb } from 'tronweb'
+
 const address = ref('')
 const status = ref(false)
+const tronWeb = new TronWeb({
+  fullHost: 'https://api.trongrid.io',
+})
 const wallet = new WalletConnectWallet({
   network: WalletConnectChainID.Mainnet,
   options: {
@@ -40,7 +47,7 @@ const wallet = new WalletConnectWallet({
       url: 'https://app.justlend.org/',
       icons: ['https://app.justlend.org/mainLogo.svg'],
     },
-    chains: ['tron:728126428'],
+    // chains: ['tron:728126428'],
   },
   web3ModalConfig: {
     themeMode: 'dark',
@@ -73,6 +80,68 @@ const linkEnd = async () => {
   status.value = false
   console.log(wallet.address)
 }
+
+const signMessage = async () => {
+  try {
+    const signature = await wallet.signMessage('hello world')
+    alert('signMessage:' + signature)
+  } catch (error) {
+    console.log('error:' + error)
+  }
+}
+
+const signTransaction = async () => {
+  try {
+    // const transaction = await tronWeb.transactionBuilder.sendTrx(
+    //   'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
+    //   100,
+    //   wallet.address,
+    // )
+    // // const transaction = {
+    // //   to: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj',
+    // //   amount: 100,
+    // // }
+    const functionSelector = 'approve(address,uint256)'
+    const options = {
+      feeLimit: 100000000,
+      callValue: 0,
+    }
+    const amount = 100
+    var parameters = [
+      { type: 'address', value: 'TCb9k9evBHsWifoVNZTeRku3pnCqcRTFe9' },
+      { type: 'uint256', value: amount },
+    ]
+    const transaction = await tronWeb.transactionBuilder.triggerSmartContract(
+      'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf',
+      functionSelector,
+      options,
+      parameters,
+      wallet.address,
+    )
+    console.log(transaction)
+    console.log(wallet)
+    const signature = await wallet.signTransaction(transaction)
+    // await tronWeb.trx.sendRawTransaction(signature)
+    console.log(signature)
+    alert('signTransaction:' + signature)
+  } catch (error) {
+    console.log('error:', error)
+  }
+}
+
+const checkConnectStatus = async () => {
+  // const isConnected = await wallet.checkConnectStatus()
+  const { address: add } = await wallet.checkConnectStatus()
+  console.log(add, wallet)
+  if (add) {
+    address.value = wallet.address
+    status.value = true
+  }
+}
+
+onMounted(() => {
+  checkConnectStatus()
+})
 </script>
 
 <style scoped>
