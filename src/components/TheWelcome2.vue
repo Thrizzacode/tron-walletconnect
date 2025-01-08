@@ -13,9 +13,14 @@
 
     <h3 style="margin-top: 50px; font-weight: bold">支援錢包</h3>
     <div class="wallets">
-      <img width="100" class="icon" src="@/assets/icons/tp.png" alt="" />
-      <img width="100" class="icon" src="@/assets/icons/tw.png" alt="" />
+      <a href="https://www.tokenpocket.pro/">
+        <img width="100" class="icon" src="@/assets/icons/tp.png" alt="" />
+      </a>
+      <a href="https://trustwallet.com/">
+        <img width="100" class="icon" src="@/assets/icons/tw.png" alt="" />
+      </a>
     </div>
+    <h4>*點擊前往安裝</h4>
   </div>
 </template>
 
