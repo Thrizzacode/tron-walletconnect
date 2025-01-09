@@ -34,8 +34,8 @@ import { TronWeb } from 'tronweb'
 const address = ref('')
 const status = ref(false)
 const tronWeb = new TronWeb({
-  fullHost: 'https://api.nileex.io',
-  // fullHost: 'https://nile.trongrid.io/',
+  // fullHost: 'https://api.nileex.io',
+  fullHost: 'https://nile.trongrid.io/',
 })
 const wallet = new WalletConnectWallet({
   // network: WalletConnectChainID.Nile,
@@ -99,25 +99,41 @@ const signTransaction = async () => {
     //   100,
     //   wallet.address,
     // )
-    const functionSelector = 'transfer(address,uint256)'
-    const parameter = [
-      { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
-      { type: 'uint256', value: 100 },
-    ]
-    const tx = await tronWeb.transactionBuilder.triggerSmartContract(
-      'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3',
-      functionSelector,
-      {},
-      parameter,
+
+    // const functionSelector = 'transfer(address,uint256)'
+    // const parameter = [
+    //   { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
+    //   { type: 'uint256', value: 100 },
+    // ]
+    // const tx = await tronWeb.transactionBuilder.triggerSmartContract(
+    //   'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3',
+    //   functionSelector,
+    //   {},
+    //   parameter,
+    //   wallet.address,
+    // )
+
+    // const testContract = 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf'
+    const testContract = 'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3'
+    const testTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
+      testContract,
+      // 'approve(address,uint256)',
+      'transfer(address,uint256)',
+      { feeLimit: 200000000 },
+      [
+        // { type: 'address', value: wallet.address },
+        { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
+        { type: 'uint256', value: 5 },
+      ],
       wallet.address,
     )
-    console.log(tx.transaction)
+
+    console.log(testTransaction)
     console.log(wallet)
-    const signature = await wallet.signTransaction(tx.transaction)
-    // const signature = await tronWeb.trx.sign(transaction)
-    // await tronWeb.trx.sendRawTransaction(signature)
+    const signature = await wallet.signTransaction(testTransaction)
+    await tronWeb.trx.sendRawTransaction(signature)
     console.log(signature)
-    alert('signTransaction:' + signature)
+    alert('signTransaction:' + signature.signature[0])
   } catch (error) {
     console.log('error:', error)
     // console.error('Error:', error.response || error.message || error)
