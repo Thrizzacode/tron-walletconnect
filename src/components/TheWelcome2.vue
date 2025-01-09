@@ -34,11 +34,12 @@ import { TronWeb } from 'tronweb'
 const address = ref('')
 const status = ref(false)
 const tronWeb = new TronWeb({
-  fullHost: 'https://api.trongrid.io',
+  fullHost: 'https://api.nileex.io',
+  // fullHost: 'https://nile.trongrid.io/',
 })
 const wallet = new WalletConnectWallet({
-  network: WalletConnectChainID.Nile,
-  // network: WalletConnectChainID.Shasta,
+  // network: WalletConnectChainID.Nile,
+  network: WalletConnectChainID.Mainnet,
   options: {
     relayUrl: 'wss://relay.walletconnect.com',
     projectId: '7c08db3a9380894831aad46f66097a34',
@@ -93,18 +94,26 @@ const signMessage = async () => {
 
 const signTransaction = async () => {
   try {
-    const transaction = await tronWeb.transactionBuilder.sendTrx(
-      'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
-      100,
+    // const transaction = await tronWeb.transactionBuilder.sendTrx(
+    //   'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
+    //   100,
+    //   wallet.address,
+    // )
+    const functionSelector = 'transfer(address,uint256)'
+    const parameter = [
+      { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
+      { type: 'uint256', value: 100 },
+    ]
+    const tx = await tronWeb.transactionBuilder.triggerSmartContract(
+      'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3',
+      functionSelector,
+      {},
+      parameter,
       wallet.address,
     )
-    // const transaction = {
-    //   to: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj',
-    //   amount: 100,
-    // }
-    console.log(transaction)
+    console.log(tx.transaction)
     console.log(wallet)
-    const signature = await wallet.signTransaction(transaction)
+    const signature = await wallet.signTransaction(tx.transaction)
     // const signature = await tronWeb.trx.sign(transaction)
     // await tronWeb.trx.sendRawTransaction(signature)
     console.log(signature)
