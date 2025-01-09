@@ -37,7 +37,7 @@ const tronWeb = new TronWeb({
   fullHost: 'https://api.trongrid.io',
 })
 const wallet = new WalletConnectWallet({
-  network: WalletConnectChainID.Mainnet,
+  network: WalletConnectChainID.Nile,
   // network: WalletConnectChainID.Shasta,
   options: {
     relayUrl: 'wss://relay.walletconnect.com',
