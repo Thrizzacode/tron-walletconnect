@@ -1,11 +1,10 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome2 from './components/TheWelcome2.vue'
+import WalletConnect from './components/WalletConnect.vue'
 </script>
 
 <template>
   <main>
-    <TheWelcome2 />
+    <WalletConnect />
   </main>
 </template>
 

@@ -14,9 +14,6 @@ export default defineConfig({
       buffer: true,
     }),
   ],
-  define: {
-    'global.Buffer': 'Buffer',
-  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

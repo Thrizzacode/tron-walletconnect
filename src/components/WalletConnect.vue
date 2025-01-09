@@ -2,8 +2,39 @@
   <div class="container">
     <button class="btn" @click="linkStart">Connect</button>
     <button class="btn" @click="linkEnd">Disconnect</button>
-    <button class="btn" @click="signMessage">Sign Message</button>
-    <button class="btn" @click="signTransaction">Sign Transaction</button>
+    <div v-if="status" style="display: flex; flex-direction: column; gap: 10px">
+      <button class="btn" @click="signMessage">Sign Message</button>
+      <div style="display: flex; gap: 10px">
+        <div>
+          <div>
+            <label for="transferAddress">代幣地址: </label>
+            <input
+              style="width: 270px"
+              type="text"
+              v-model="transferAddress"
+              placeholder="請輸入要轉帳的代幣地址"
+            />
+          </div>
+
+          <div>
+            <label for="transferAddress">要轉入的錢包地址: </label>
+            <input
+              style="width: 270px"
+              type="text"
+              v-model="toAddress"
+              placeholder="請輸入要轉入的地址"
+            />
+          </div>
+
+          <div>
+            <label for="transferAddress">要轉入的金額: </label>
+            <input style="width: 100px" type="number" v-model="amount" placeholder="請輸入金額" />
+          </div>
+        </div>
+      </div>
+      <button class="btn" @click="signTransaction">Transfer</button>
+    </div>
+
     <div>
       <p>
         Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
@@ -32,6 +63,10 @@ import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconne
 import { TronWeb } from 'tronweb'
 
 const address = ref('')
+const transferAddress = ref('TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3')
+const toAddress = ref('TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj')
+const amount = ref(100)
+
 const status = ref(false)
 const tronWeb = new TronWeb({
   // fullHost: 'https://api.nileex.io',
@@ -49,7 +84,6 @@ const wallet = new WalletConnectWallet({
       url: 'https://app.justlend.org/',
       icons: ['https://app.justlend.org/mainLogo.svg'],
     },
-    // chains: ['tron:728126428'],
   },
   web3ModalConfig: {
     themeMode: 'dark',
@@ -94,36 +128,14 @@ const signMessage = async () => {
 
 const signTransaction = async () => {
   try {
-    // const transaction = await tronWeb.transactionBuilder.sendTrx(
-    //   'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
-    //   100,
-    //   wallet.address,
-    // )
-
-    // const functionSelector = 'transfer(address,uint256)'
-    // const parameter = [
-    //   { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
-    //   { type: 'uint256', value: 100 },
-    // ]
-    // const tx = await tronWeb.transactionBuilder.triggerSmartContract(
-    //   'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3',
-    //   functionSelector,
-    //   {},
-    //   parameter,
-    //   wallet.address,
-    // )
-
     // const testContract = 'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf'
-    const testContract = 'TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3'
     const testTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
-      testContract,
-      // 'approve(address,uint256)',
+      transferAddress.value,
       'transfer(address,uint256)',
       { feeLimit: 200000000 },
       [
-        // { type: 'address', value: wallet.address },
-        { type: 'address', value: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj' },
-        { type: 'uint256', value: 5 },
+        { type: 'address', value: toAddress.value },
+        { type: 'uint256', value: amount.value },
       ],
       wallet.address,
     )
@@ -133,10 +145,9 @@ const signTransaction = async () => {
     const signature = await wallet.signTransaction(testTransaction)
     await tronWeb.trx.sendRawTransaction(signature)
     console.log(signature)
-    alert('signTransaction:' + signature.signature[0])
+    alert('signTransaction:' + signature.txID)
   } catch (error) {
     console.log('error:', error)
-    // console.error('Error:', error.response || error.message || error)
   }
 }
 
