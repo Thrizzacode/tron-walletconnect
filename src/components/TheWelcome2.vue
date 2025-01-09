@@ -3,7 +3,7 @@
     <button class="btn" @click="linkStart">Connect</button>
     <button class="btn" @click="linkEnd">Disconnect</button>
     <button class="btn" @click="signMessage">Sign Message</button>
-    <!-- <button class="btn" @click="signTransaction">Sign Transaction</button> -->
+    <button class="btn" @click="signTransaction">Sign Transaction</button>
     <div>
       <p>
         Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
@@ -38,12 +38,13 @@ const tronWeb = new TronWeb({
 })
 const wallet = new WalletConnectWallet({
   network: WalletConnectChainID.Mainnet,
+  // network: WalletConnectChainID.Shasta,
   options: {
     relayUrl: 'wss://relay.walletconnect.com',
     projectId: '7c08db3a9380894831aad46f66097a34',
     metadata: {
-      name: 'JustLend',
-      description: 'JustLend WalletConnect',
+      name: '88M Market',
+      description: '88M WalletConnect',
       url: 'https://app.justlend.org/',
       icons: ['https://app.justlend.org/mainLogo.svg'],
     },
@@ -92,40 +93,25 @@ const signMessage = async () => {
 
 const signTransaction = async () => {
   try {
-    // const transaction = await tronWeb.transactionBuilder.sendTrx(
-    //   'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
-    //   100,
-    //   wallet.address,
-    // )
-    // // const transaction = {
-    // //   to: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj',
-    // //   amount: 100,
-    // // }
-    const functionSelector = 'approve(address,uint256)'
-    const options = {
-      feeLimit: 100000000,
-      callValue: 0,
-    }
-    const amount = 100
-    var parameters = [
-      { type: 'address', value: 'TCb9k9evBHsWifoVNZTeRku3pnCqcRTFe9' },
-      { type: 'uint256', value: amount },
-    ]
-    const transaction = await tronWeb.transactionBuilder.triggerSmartContract(
-      'TXYZopYRdj2D9XRtbG411XZZ3kM5VkAeBf',
-      functionSelector,
-      options,
-      parameters,
+    const transaction = await tronWeb.transactionBuilder.sendTrx(
+      'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj', // 默認為連接的錢包地址
+      100,
       wallet.address,
     )
+    // const transaction = {
+    //   to: 'TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj',
+    //   amount: 100,
+    // }
     console.log(transaction)
     console.log(wallet)
     const signature = await wallet.signTransaction(transaction)
+    // const signature = await tronWeb.trx.sign(transaction)
     // await tronWeb.trx.sendRawTransaction(signature)
     console.log(signature)
     alert('signTransaction:' + signature)
   } catch (error) {
     console.log('error:', error)
+    // console.error('Error:', error.response || error.message || error)
   }
 }
 
