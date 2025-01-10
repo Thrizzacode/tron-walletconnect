@@ -1,47 +1,122 @@
 <template>
   <div class="container">
-    <button class="btn" @click="linkStart">Connect</button>
-    <button class="btn" @click="linkEnd">Disconnect</button>
-    <div v-if="status" style="display: flex; flex-direction: column; gap: 10px">
-      <button class="btn" @click="signMessage">Sign Message</button>
-      <div style="display: flex; gap: 10px">
+    <div style="display: flex; gap: 50px">
+      <!-- wallectconnect -->
+      <div>
+        <h2>Walletconnect</h2>
+        <!-- <button class="btn" @click="linkStart">Connect</button>
+    <button class="btn" @click="linkEnd">Disconnect</button> -->
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <button class="btn" @click="sign">Sign Message</button>
+          <div style="display: flex; gap: 10px">
+            <div>
+              <div>
+                <label for="transferAddress">代幣地址: </label>
+                <input
+                  style="width: 270px"
+                  type="text"
+                  v-model="transferAddress"
+                  placeholder="請輸入要轉帳的代幣地址"
+                />
+              </div>
+
+              <div>
+                <label for="transferAddress">要轉入的錢包地址: </label>
+                <input
+                  style="width: 270px"
+                  type="text"
+                  v-model="toAddress"
+                  placeholder="請輸入要轉入的地址"
+                />
+              </div>
+
+              <div>
+                <label for="transferAddress">要轉入的金額: </label>
+                <input
+                  style="width: 100px"
+                  type="number"
+                  v-model="amount"
+                  placeholder="請輸入金額"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- <button class="btn" @click="signTransaction">Transfer</button> -->
+          <button class="btn" @click="transfer">Transfer</button>
+        </div>
+
         <div>
-          <div>
-            <label for="transferAddress">代幣地址: </label>
-            <input
-              style="width: 270px"
-              type="text"
-              v-model="transferAddress"
-              placeholder="請輸入要轉帳的代幣地址"
-            />
-          </div>
-
-          <div>
-            <label for="transferAddress">要轉入的錢包地址: </label>
-            <input
-              style="width: 270px"
-              type="text"
-              v-model="toAddress"
-              placeholder="請輸入要轉入的地址"
-            />
-          </div>
-
-          <div>
-            <label for="transferAddress">要轉入的金額: </label>
-            <input style="width: 100px" type="number" v-model="amount" placeholder="請輸入金額" />
-          </div>
+          <p>
+            Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
+          </p>
+          <p>
+            Your Address: <span>{{ address }}</span>
+          </p>
         </div>
       </div>
-      <button class="btn" @click="signTransaction">Transfer</button>
-    </div>
 
-    <div>
-      <p>
-        Status: <span>{{ status ? 'Connected' : 'Disconnect' }}</span>
-      </p>
-      <p>
-        Your Address: <span>{{ address }}</span>
-      </p>
+      <!-- qrcode -->
+      <div>
+        <h2>QRCode</h2>
+        <!-- <button class="btn" @click="linkStart">Connect</button>
+    <button class="btn" @click="linkEnd">Disconnect</button> -->
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <!-- <button class="btn" @click="qrcodeSignMessage">Sign Message</button> -->
+          <a
+            href='tpoutside://pull.activity?param={"hash": false,
+	"memo": "demo",
+	"message": "0xc05dfb5d7d33ef21dacffc010ff0a45204a3dd5e0cf6f9a970f07339d7a7770e",
+	"signType": "ethSign",
+	"action": "sign",
+	"actionId": "web-db4c5466-1a03-438c-90c9-2172e8becea5",
+	"blockchains": [{
+		"chainId": "1",
+		"network": "ethereum"
+	}],
+	"callbackUrl": "http:\/\/115.205.0.178:9011\/taaBizApi\/taaInitData",
+	"dappIcon": "https:\/\/eosknights.io\/img\/icon.png",
+	"dappName": "Test demo",
+	"protocol": "TokenPocket",
+	"version": "2.0"}'
+            >Open TokenPocket to sign message</a
+          ><br />
+          <div style="display: flex; gap: 10px">
+            <div>
+              <div>
+                <label for="transferAddress">代幣地址: </label>
+                <input
+                  style="width: 270px"
+                  type="text"
+                  v-model="transferAddress"
+                  placeholder="請輸入要轉帳的代幣地址"
+                />
+              </div>
+
+              <div>
+                <label for="transferAddress">要轉入的錢包地址: </label>
+                <input
+                  style="width: 270px"
+                  type="text"
+                  v-model="toAddress"
+                  placeholder="請輸入要轉入的地址"
+                />
+              </div>
+
+              <div>
+                <label for="transferAddress">要轉入的金額: </label>
+                <input
+                  style="width: 100px"
+                  type="number"
+                  v-model="amount"
+                  placeholder="請輸入金額"
+                />
+              </div>
+            </div>
+          </div>
+          <!-- <button class="btn" @click="signTransaction">Transfer</button> -->
+          <button class="btn" @click="transfer">Transfer</button>
+        </div>
+      </div>
     </div>
 
     <h3 style="margin-top: 50px; font-weight: bold">支援錢包</h3>
@@ -123,6 +198,23 @@ const signMessage = async () => {
     alert('signMessage:' + signature)
   } catch (error) {
     console.log('error:' + error)
+  }
+}
+
+const sign = async () => {
+  if (!status.value) {
+    await linkStart()
+    await signMessage()
+  } else {
+    await signMessage()
+  }
+}
+
+const transfer = async () => {
+  if (!status.value) {
+    linkStart()
+  } else {
+    signTransaction()
   }
 }
 
