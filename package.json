@@ -20,6 +20,8 @@
     "@walletconnect/utils": "^2.17.3",
     "buffer": "^6.0.3",
     "crc": "^4.3.2",
+    "js-crc": "^0.3.0",
+    "qrcode": "^1.5.4",
     "tronweb": "6.0.0",
     "vue": "^3.5.13"
   },

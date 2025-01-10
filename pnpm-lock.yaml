@@ -29,6 +29,12 @@ importers:
       crc:
         specifier: ^4.3.2
         version: 4.3.2(buffer@6.0.3)
+      js-crc:
+        specifier: ^0.3.0
+        version: 0.3.0
+      qrcode:
+        specifier: ^1.5.4
+        version: 1.5.4
       tronweb:
         specifier: 6.0.0
         version: 6.0.0
@@ -1498,6 +1504,9 @@ packages:
     resolution: {integrity: sha512-LpB/54B+/2J5hqQ7imZHfdU31OlgQqx7ZicVlkm9kzg9/w8GKLEcFfJl/t7DCEDueOyBAD6zCCwTO6Fzs0NoEQ==}
     engines: {node: '>=16'}
 
+  js-crc@0.3.0:
+    resolution: {integrity: sha512-zGWE0PF6ure5DOjBQElaGXPtGo8/14AXtbYiZbjpySlKL8wJXezkz6jptOTHSRUrXkjOR2QhSUPHxfVBbuBAmA==}
+
   js-sha3@0.8.0:
     resolution: {integrity: sha512-gF1cRrHhIzNfToc802P800N8PpXS+evLLXfsVpowqmAFR9uwbi89WvXg2QspOmXL8QL86J4T1EpFu+yUkwJY3Q==}
 
@@ -1815,6 +1824,11 @@ packages:
 
   qrcode@1.5.3:
     resolution: {integrity: sha512-puyri6ApkEHYiVl4CFzo1tDkAZ+ATcnbJrJ6RiBM1Fhctdn/ix9MTE3hRph33omisEbC/2fcfemsseiKgBPKZg==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
+
+  qrcode@1.5.4:
+    resolution: {integrity: sha512-1ca71Zgiu6ORjHqFBDpnSMTR2ReToX4l1Au1VFLyVeBTFavzQnv5JxMFr3ukHVKpSrSA2MCk0lNJSykjUfz7Zg==}
     engines: {node: '>=10.13.0'}
     hasBin: true
 
@@ -4042,6 +4056,8 @@ snapshots:
 
   isexe@3.1.1: {}
 
+  js-crc@0.3.0: {}
+
   js-sha3@0.8.0: {}
 
   js-tokens@4.0.0: {}
@@ -4341,6 +4357,12 @@ snapshots:
     dependencies:
       dijkstrajs: 1.0.3
       encode-utf8: 1.0.3
+      pngjs: 5.0.0
+      yargs: 15.4.1
+
+  qrcode@1.5.4:
+    dependencies:
+      dijkstrajs: 1.0.3
       pngjs: 5.0.0
       yargs: 15.4.1
 

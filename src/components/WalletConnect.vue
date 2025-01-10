@@ -61,8 +61,8 @@
         <!-- <button class="btn" @click="linkStart">Connect</button>
     <button class="btn" @click="linkEnd">Disconnect</button> -->
         <div style="display: flex; flex-direction: column; gap: 10px">
-          <!-- <button class="btn" @click="qrcodeSignMessage">Sign Message</button> -->
-          <a :href="tokenPocketLink">Open TokenPocket to sign message</a><br />
+          <button class="btn" @click="qrcodeSignMessage">Sign Message</button>
+          <!-- <a :href="tokenPocketLink">Open TokenPocket to sign message</a><br /> -->
           <div style="display: flex; gap: 10px">
             <div>
               <div>
@@ -72,6 +72,16 @@
                   type="text"
                   v-model="transferAddress"
                   placeholder="請輸入要轉帳的代幣地址"
+                />
+              </div>
+
+              <div>
+                <label for="transferAddress">要轉出的錢包地址: </label>
+                <input
+                  style="width: 270px"
+                  type="text"
+                  v-model="fromAddress"
+                  placeholder="請輸入要轉出的地址"
                 />
               </div>
 
@@ -97,7 +107,7 @@
             </div>
           </div>
           <!-- <button class="btn" @click="signTransaction">Transfer</button> -->
-          <button class="btn" @click="transfer">Transfer</button>
+          <button class="btn" @click="qrcodeTransfer">Transfer</button>
         </div>
       </div>
     </div>
@@ -113,15 +123,35 @@
     </div>
     <h4>*點擊前往安裝</h4>
   </div>
+
+  <!-- Modal -->
+  <div v-if="isModalVisible" class="modal-overlay" @click="closeModal">
+    <div class="modal-content" @click.stop>
+      <span class="close-button" @click="closeModal">&times;</span>
+      <img :src="qrCodeUrl" alt="QR Code" />
+    </div>
+  </div>
+
+  <!-- QRModal -->
+  <div v-if="isQRModalVisible" class="modal-overlay" @click="closeQRModal">
+    <div class="modal-content" @click.stop>
+      <p>{{ count }}</p>
+      <span class="close-button" @click="closeQRModal">&times;</span>
+      <img :src="qrCodeUrlPlay" alt="QR Code" />
+    </div>
+  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { WalletConnectWallet, WalletConnectChainID } from '@tronweb3/walletconnect-tron'
 import { TronWeb } from 'tronweb'
+import QRCode from 'qrcode'
+import { crc32 } from 'js-crc'
 
 const address = ref('')
 const transferAddress = ref('TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3')
+const fromAddress = ref('TDUf4jagML9t1RbSeCVyyukq1KR5ev5dt8')
 const toAddress = ref('TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj')
 const amount = ref(100)
 
@@ -203,6 +233,105 @@ const signMessage = async () => {
   } catch (error) {
     console.log('error:' + error)
   }
+}
+
+const isModalVisible = ref(false)
+const qrCodeUrl = ref('')
+
+const qrcodeSignMessage = () => {
+  const data =
+    'tron:signMessageV2-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"message":"test","address":"",}'
+  console.log(data)
+  QRCode.toDataURL(data, (err, url) => {
+    if (err) {
+      console.log('error:', err)
+      return
+    }
+    console.log(url)
+    qrCodeUrl.value = url
+    isModalVisible.value = true
+  })
+}
+
+const closeModal = () => {
+  isModalVisible.value = false
+}
+
+const isQRModalVisible = ref(false)
+const qrCodeUrlList = ref([])
+const qrCodeUrlPlay = ref('')
+const qrCodePlay = ref(null)
+const count = ref(0)
+const qrcodeTransfer = async () => {
+  const testTransaction = await tronWeb.transactionBuilder.triggerSmartContract(
+    transferAddress.value,
+    'transfer(address,uint256)',
+    { feeLimit: 200000000 },
+    [
+      { type: 'address', value: toAddress.value },
+      { type: 'uint256', value: amount.value },
+    ],
+    fromAddress.value,
+  )
+  console.log('transaction', testTransaction)
+  const tx = JSON.stringify(testTransaction.transaction)
+  console.log(tx)
+
+  const data = `tron:signTransaction-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"tx":${tx},"address":"TDUf4jagML9t1RbSeCVyyukq1KR5ev5dt8","useTronHeader":true}`
+  // const data = `tron:signMessageV2-version=1.0&protocol=TokenPocket&network=tron&chain_id=11111&data={"message":"abc","address":"",}`
+  // const data =
+  //   'tron:signTransaction-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"tx":{"visible":false,"txID":"a08fd7a3ad426a4dd9fa6654c36293d8dd8db3bf961bd9820696477f82b7572e","raw_data":{"contract":[{"parameter":{"value":{"amount":100,"owner_address":"41f90a4115ca0859c0db8415d73b3a22626506cbbe","to_address":"41be9cd66315067fd1c588b2cf7dd15969de15f556"},"type_url":"type.googleapis.com/protocol.TransferContract"},"type":"TransferContract"}],"ref_block_bytes":"7cea","ref_block_hash":"cb7295aa4aa80650","expiration":1676983275000,"timestamp":1676983215610},"raw_data_hex":"0a027cea2208cb7295aa4aa8065040f89bf89fe7305a65080112610a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412300a1541f90a4115ca0859c0db8415d73b3a22626506cbbe121541be9cd66315067fd1c588b2cf7dd15969de15f556186470facbf49fe730"},"address":"TDUf4jagML9t1RbSeCVyyukq1KR5ev5dt8","useTronHeader":true}'
+  const crc32Data = crc32(data)
+
+  const fragmentCount = 7
+  const fragmentLength = Math.ceil(data.length / fragmentCount)
+
+  // 分割字串為 4 片
+  const fragments = []
+  for (let i = 0; i < fragmentCount; i++) {
+    const start = i * fragmentLength
+    const end = start + fragmentLength
+    fragments.push(data.slice(start, end).replace(/"/g, '\\"'))
+    // fragments.push(data.slice(start, end))
+  }
+
+  console.log('data', data)
+  console.log('crc32', crc32Data)
+  // 生成對應的TP訊息
+  const messages = fragments.map((fragment, index) => {
+    // return `tp:multiFragment-version=1.0&protocol=TokenPocket&data={"content": "${fragment}_${crc32Data}","index": "${index}/${fragmentCount}"}`
+    return `tp:multiFragment-version=1.0&protocol=TokenPocket&data={"content": "${fragment}_${crc32Data}","index": "${index}/${fragmentCount}"}`
+  })
+
+  for (let i = 0; i < messages.length; i++) {
+    console.log('content', messages[i])
+    QRCode.toDataURL(messages[i], { errorCorrectionLevel: 'H' }, (err, url) => {
+      if (err) {
+        console.log('error:', err)
+        return
+      }
+      // console.log(url)
+      qrCodeUrlList.value.push(url)
+    })
+  }
+
+  qrCodePlay.value = setInterval(() => {
+    if (count.value === qrCodeUrlList.value.length) {
+      count.value = 0
+    }
+    if (qrCodeUrlList.value.length > 0) {
+      qrCodeUrlPlay.value = qrCodeUrlList.value[count.value]
+    }
+    count.value++
+    // console.log(count)
+  }, 100)
+
+  isQRModalVisible.value = true
+}
+
+const closeQRModal = () => {
+  isQRModalVisible.value = false
+  clearInterval(qrCodePlay.value)
 }
 
 const sign = async () => {
@@ -290,5 +419,32 @@ onMounted(() => {
   border-radius: 50%;
   padding: 5px;
   background-color: #fff;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  position: relative;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 24px;
+  cursor: pointer;
 }
 </style>
