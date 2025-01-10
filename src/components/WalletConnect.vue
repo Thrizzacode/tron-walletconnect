@@ -4,8 +4,8 @@
       <!-- wallectconnect -->
       <div>
         <h2>Walletconnect</h2>
-        <!-- <button class="btn" @click="linkStart">Connect</button>
-    <button class="btn" @click="linkEnd">Disconnect</button> -->
+        <!-- <button class="btn" @click="linkStart">Connect</button> -->
+        <button class="btn" @click="linkEnd">Disconnect</button>
         <div style="display: flex; flex-direction: column; gap: 10px">
           <button class="btn" @click="sign">Sign Message</button>
           <div style="display: flex; gap: 10px">
@@ -126,21 +126,17 @@ const toAddress = ref('TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj')
 const amount = ref(100)
 
 const param = {
-  hash: false,
-  memo: 'demo',
-  message: '0xc05dfb5d7d33ef21dacffc010ff0a45204a3dd5e0cf6f9a970f07339d7a7770e',
-  signType: 'ethSign',
-  action: 'sign',
-  actionId: 'web-db4c5466-1a03-438c-90c9-2172e8becea5',
+  callbackUrl: 'http:\/\/115.205.0.178:9011\/taaBizApi\/taaInitData',
+  action: 'login',
+  actionId: '1648522106711',
   blockchains: [
     {
       chainId: '1',
       network: 'ethereum',
     },
   ],
-  callbackUrl: 'http:\/\/115.205.0.178:9011\/taaBizApi\/taaInitData',
   dappIcon: 'https:\/\/eosknights.io\/img\/icon.png',
-  dappName: 'Test demo',
+  dappName: 'zs',
   protocol: 'TokenPocket',
   version: '2.0',
 }
