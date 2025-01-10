@@ -126,17 +126,19 @@ const toAddress = ref('TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj')
 const amount = ref(100)
 
 const param = {
-  callbackUrl: 'http://115.205.0.178:9011/taaBizApi/taaInitData',
-  action: 'login',
-  actionId: '1648522106711',
+  txData:
+    '{"from":"0x12F4900A1fB41f751b8F616832643224606B75B4","gasPrice":"0x6c088e200","gas":"0xea60","chainId":"1","to":"0x1d1e7fb353be75669c53c18ded2abcb8c4793d80","data":"0xa9059cbb000000000000000000000000171a0b081493722a5f22ebe6f0c4adf5fde49bd8000000000000000000000000000000000000000000000000000000000012c4b0"}',
+  action: 'pushTransaction',
+  actionId: 'web-db4c5466-1a03-438c-90c9-2172e8becea5',
   blockchains: [
     {
       chainId: '1',
       network: 'ethereum',
     },
   ],
+  callbackUrl: 'http:\/\/115.205.0.178:9011\/taaBizApi\/taaInitData',
   dappIcon: 'https://eosknights.io/img/icon.png',
-  dappName: 'zs',
+  dappName: 'Test demo',
   protocol: 'TokenPocket',
   version: '2.0',
 }
