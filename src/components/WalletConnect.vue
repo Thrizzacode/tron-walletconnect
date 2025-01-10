@@ -62,24 +62,7 @@
     <button class="btn" @click="linkEnd">Disconnect</button> -->
         <div style="display: flex; flex-direction: column; gap: 10px">
           <!-- <button class="btn" @click="qrcodeSignMessage">Sign Message</button> -->
-          <a
-            href='tpoutside://pull.activity?param={"hash": false,
-	"memo": "demo",
-	"message": "0xc05dfb5d7d33ef21dacffc010ff0a45204a3dd5e0cf6f9a970f07339d7a7770e",
-	"signType": "ethSign",
-	"action": "sign",
-	"actionId": "web-db4c5466-1a03-438c-90c9-2172e8becea5",
-	"blockchains": [{
-		"chainId": "1",
-		"network": "ethereum"
-	}],
-	"callbackUrl": "http:\/\/115.205.0.178:9011\/taaBizApi\/taaInitData",
-	"dappIcon": "https:\/\/eosknights.io\/img\/icon.png",
-	"dappName": "Test demo",
-	"protocol": "TokenPocket",
-	"version": "2.0"}'
-            >Open TokenPocket to sign message</a
-          ><br />
+          <a :href="tokenPocketLink">Open TokenPocket to sign message</a><br />
           <div style="display: flex; gap: 10px">
             <div>
               <div>
@@ -141,6 +124,27 @@ const address = ref('')
 const transferAddress = ref('TF17BgPaZYbz8oxbjhriubPDsA7ArKoLX3')
 const toAddress = ref('TX48fYG69pGjZcC7W3ADZg6UwkwQooh2xj')
 const amount = ref(100)
+
+const param = {
+  callbackUrl: 'http://115.205.0.178:9011/taaBizApi/taaInitData',
+  action: 'login',
+  actionId: '1648522106711',
+  blockchains: [
+    {
+      chainId: '1',
+      network: 'ethereum',
+    },
+  ],
+  dappIcon: 'https://eosknights.io/img/icon.png',
+  dappName: 'zs',
+  protocol: 'TokenPocket',
+  version: '2.0',
+}
+
+// 使用 encodeURIComponent 來編碼 param
+const tokenPocketLink = ref(
+  `tpoutside://pull.activity?param=${encodeURIComponent(JSON.stringify(param), 'utf-8')}`,
+)
 
 const status = ref(false)
 const tronWeb = new TronWeb({
