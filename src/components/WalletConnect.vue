@@ -277,7 +277,7 @@ const qrcodeTransfer = async () => {
   const tx = JSON.stringify(testTransaction.transaction)
   console.log(tx)
 
-  const data = `tron:signTransaction-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"tx":${tx},"address":${fromAddress.value},"useTronHeader":true}&callbackUrl=https://jsonplaceholder.typicode.com/posts`
+  const data = `tron:signTransaction-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"tx":${tx},"address":"${fromAddress.value}","useTronHeader":true}&callbackUrl=https://jsonplaceholder.typicode.com/posts`
   // const data = `tron:signMessageV2-version=1.0&protocol=TokenPocket&network=tron&chain_id=11111&data={"message":"abc","address":"",}`
   // const data =
   //   'tron:signTransaction-version=1.0&protocol=TokenPocket&network=tron&chain_id=2&data={"tx":{"visible":false,"txID":"a08fd7a3ad426a4dd9fa6654c36293d8dd8db3bf961bd9820696477f82b7572e","raw_data":{"contract":[{"parameter":{"value":{"amount":100,"owner_address":"41f90a4115ca0859c0db8415d73b3a22626506cbbe","to_address":"41be9cd66315067fd1c588b2cf7dd15969de15f556"},"type_url":"type.googleapis.com/protocol.TransferContract"},"type":"TransferContract"}],"ref_block_bytes":"7cea","ref_block_hash":"cb7295aa4aa80650","expiration":1676983275000,"timestamp":1676983215610},"raw_data_hex":"0a027cea2208cb7295aa4aa8065040f89bf89fe7305a65080112610a2d747970652e676f6f676c65617069732e636f6d2f70726f746f636f6c2e5472616e73666572436f6e747261637412300a1541f90a4115ca0859c0db8415d73b3a22626506cbbe121541be9cd66315067fd1c588b2cf7dd15969de15f556186470facbf49fe730"},"address":"TDUf4jagML9t1RbSeCVyyukq1KR5ev5dt8","useTronHeader":true}'
